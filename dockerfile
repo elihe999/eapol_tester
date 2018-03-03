@@ -7,7 +7,7 @@ MAINTAINER Johannes Luther <joe@netgab.net>
 ## Install packages
 RUN apk update && apk upgrade && \
   apk add --update --no-cache \
-  gcc make openssl-dev libnl-dev musl-dev linux-headers
+  gcc make openssl-dev libnl-dev musl-dev linux-headers bash
 
 ## Create files and directories
 RUN wget https://w1.fi/releases/wpa_supplicant-2.6.tar.gz -P /tmp/ && \
@@ -26,9 +26,6 @@ RUN cd /tmp/wpa_supplicant-2.6/wpa_supplicant/ && \
 RUN cp /tmp/wpa_supplicant-2.6/wpa_supplicant/eapol_test /usr/local/bin && \
   rm -r /tmp/wpa_supplicant*
 
-#COPY *.sh /etc/rad1x/scripts/
-#COPY config /etc/rad1x/config/
+COPY *.sh /usr/local/bin
 
-ENTRYPOINT ["/bin/sh"]
-
-#CMD ["radiusd","-Xx","-f"]
+ENTRYPOINT ["/bin/bash"]
