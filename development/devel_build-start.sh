@@ -3,7 +3,7 @@
 LABEL_DEVEL="development"
 
 # Rebuild image
-docker build --tag eapol_tester:latest .
+docker build --tag eapol_tester:latest ..
 
 # Start container with new image in interactive shell
 docker run --label $LABEL_DEVEL -ti eapol_tester 
