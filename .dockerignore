@@ -1,0 +1,10 @@
+# General
+*/temp*
+temp?
+*/tmp*
+tmp?
+*.md
+!README.md
+
+# Ignore development scripts
+devel*
