@@ -1,0 +1,43 @@
+## Base image
+FROM ubuntu
+
+## Dockerfile author
+MAINTAINER Johannes Luther <joe@netgab.net>
+
+## Install packages and dependencies
+RUN apt-get update && apt-get install -y \
+       vim \
+       wget \
+       make \
+       gcc \
+       libssl-dev \
+       libnl-3-dev && \
+     rm -rf /var/lib/apt/lists/* && \
+     ln -s /lib/x86_64-linux-gnu/libnl-3.so /lib/x86_64-linux-gnu/libnl.so
+
+## Create files and directories
+RUN wget https://w1.fi/releases/wpa_supplicant-2.6.tar.gz -q -P /tmp/ && \
+  cd /tmp && \
+  tar xzf /tmp/wpa_supplicant-2.6.tar.gz
+
+## Change building config that the eapol_test binary is created
+RUN cp /tmp/wpa_supplicant-2.6/wpa_supplicant/defconfig /tmp/wpa_supplicant-2.6/wpa_supplicant/.config && \
+  sed -i s/#CONFIG_EAPOL_TEST=y/CONFIG_EAPOL_TEST=y/g /tmp/wpa_supplicant-2.6/wpa_supplicant/.config
+
+## Compile
+RUN cd /tmp/wpa_supplicant-2.6/wpa_supplicant/ && \
+  make eapol_test
+
+## Copy and clean up
+RUN cp /tmp/wpa_supplicant-2.6/wpa_supplicant/eapol_test /usr/local/bin && \
+  rm -r /tmp/wpa_supplicant* && \
+  apt-get remove -y \
+    wget \
+    make \
+    gcc \
+    libssl-dev \
+    libnl-3-dev
+
+COPY eapol_test_ping.sh /usr/local/bin
+
+ENTRYPOINT ["/bin/bash"]
